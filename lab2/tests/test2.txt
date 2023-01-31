@@ -1,0 +1,10 @@
+Context-free grammar:
+[S] -> a[B]
+[B] -> b[B]|c[B]|[F]
+[F] -> ba
+Regular grammar:
+[S] -> a[A]
+[A] -> b[B]|a[A]|c[A]
+[B] -> b[C]|a[B]|c[B]
+[C] -> a[C]|c[C]|c[F0]
+[F0] -> c
