@@ -97,8 +97,23 @@ def find_intersection(cfg, dfa):
                 to_check = [start]
                 checked_rules = set()
     result = checked_rules
+
+    bad_result = set()
+    for rule in checked_rules:
+        for right in rule.right:
+            if rule.left == right and not (goes_to_nonterm(checked_rules, rule.left)):
+                bad_result.add(rule)
+    for res in bad_result:
+        if res in result:
+            result.remove(res)
     return result
 
+
+def goes_to_nonterm(rules, rule):
+    for rule_1 in rules:
+        if rule_1.left == rule and all(type(elem) == str for elem in rule_1.right):
+            return True
+    return False
 
 def find_result(intersection, start):
     final_scals = {start}
