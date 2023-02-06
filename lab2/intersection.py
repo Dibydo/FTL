@@ -111,7 +111,7 @@ def find_intersection(cfg, dfa):
 
 def goes_to_nonterm(rules, rule):
     for rule_1 in rules:
-        if rule_1.left == rule and all(type(elem) == str for elem in rule_1.right):
+        if rule_1.left == rule and any(type(elem) == str for elem in rule_1.right):
             return True
     return False
 
