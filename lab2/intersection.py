@@ -49,56 +49,6 @@ def find_intersection(cfg, dfa):
             rule_left_dict[rule.left] = 1
         else:
             rule_left_dict[rule.left] += 1
-    single_use_term = set()
-    for key in rule_left_dict:
-        if rule_left_dict[key] == 1:
-            single_use_term.add(key)
-
-    single_use_rules = set()
-    for a in single_use_term:
-        for b in cfg.rules:
-            if a == b.left:
-                single_use_rules.add(b)
-
-    for single_use_rule in single_use_rules:
-        if single_use_rule in cfg.rules:
-            cfg.rules.remove(single_use_rule)
-
-    changed_rules = set()
-    for rule in cfg.rules:
-        for single_use_rule in single_use_rules:
-            new_right = []
-            for right in rule.rights:
-                if right == single_use_rule.left:
-                    for a in single_use_rule.rights:
-                        new_right.append(a)
-                else:
-                    new_right.append(right)
-            changed_rules.add(Rule(rule.left, new_right))
-
-    changed_rules_2 = deepcopy(changed_rules)
-    for rule in changed_rules:
-        for right in rule.rights:
-            for single_use_rule in single_use_rules:
-                for single_use_right in single_use_rule.rights:
-                    if right == single_use_rule.left and single_use_right == rule.left:
-                        changed_rules_2.remove(rule)
-
-    changed_rules_3 = deepcopy(changed_rules_2)
-    for rule in changed_rules_2:
-        for right in rule.rights:
-            for single_use_rule in single_use_rules:
-                if single_use_rule.left == right and len(single_use_rule.rights) == 1 and type(
-                        single_use_rule.rights[0]) == Term:
-                    new_right = []
-                    for right_1 in rule.rights:
-                        if right_1 != single_use_rule.left:
-                            new_right.append(right_1)
-                        else:
-                            new_right.append(single_use_rule.rights[0])
-                    changed_rules_3.remove(rule)
-                    changed_rules_3.add(Rule(rule.left, new_right))
-    cfg.rules = changed_rules_3
 
     for rule in cfg.rules:
         if len(rule.rights) == 1:

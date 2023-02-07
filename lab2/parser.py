@@ -22,7 +22,7 @@ def read_input(input_filename):
             cfg_result += non_terminal + "->" + elem + "\n"
 
     a = CFG_Parser(cfg_result)
-    c = a.parse_rules().to_chomsky_norm_form()
+    c = a.parse_rules().toCNF()
 
     states = {"[F0]"}
     edges = set()
