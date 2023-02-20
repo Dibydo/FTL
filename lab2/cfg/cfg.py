@@ -316,8 +316,6 @@ class CFG():
         self.ChR = chainrules
 
     def remove_useless_rules(self):
-        print("IN REMOVE USELESS")
-        print(self)
         return self.remove_nongenerating_rules().remove_unreachable_symbols()
 
     def several_nonterm_removal(self):

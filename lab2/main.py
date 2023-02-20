@@ -1,5 +1,6 @@
 from parser import read_input
 from intersection import find_intersection
+from new_intersection import *
 import argparse
 
 parser = argparse.ArgumentParser(description="")
@@ -18,7 +19,10 @@ if args.dfa:
     print("DFA:")
     print(d)
 
-intersection = find_intersection(c, d)
-print("Intersection:")
-for a in intersection:
+new_intersect = make_intersection(c, d)
+print(new_intersect)
+# intersection = find_intersection(c, d)
+# print(intersection)
+# print("Intersection:")
+for a in new_intersect:
     print(a)
