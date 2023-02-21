@@ -71,17 +71,26 @@ def removeUnreachableNonterminals():
                 if nt == r.left and not nt.reachable:
                     rules.remove(r)
                     terminalRules.remove(r)
+                    if debug: print("Unreachable rule:\n", r)
+                    if debug: print("Rules:\n", rules)
+                    if debug: print("Terminal rules:\n", terminalRules)
                     break
         else:
             for rpt in r.rights:
                 if rpt not in nonterms:
                     rules.remove(r)
+                    if debug: print("Unreachable rule:\n", r)
+                    if debug: print("Rules:\n", rules)
             for nt in nonterms:
                 if nt == r.left and not nt.reachable:
                     rules.remove(r)
+                    if debug: print("Unreachable rule:\n", r)
+                    if debug: print("Rules:\n", rules)
     for nt in nonterms[:]:
         if not nt.reachable:
             nonterms.remove(nt)
+            if debug: print("Unreachable rule:\n", nt)
+            if debug: print("Nonterminals:\n", nonterms)
 
 
 def markProducing():
@@ -120,19 +129,25 @@ def removeUnproducingNonterminals():
         for nt in nonterms:
             if nt == r.left and not nt.producing:
                 rules.remove(r)
+                if debug: print("Unproducing rule:\n", r)
+                if debug: print("Rules:\n", rules)
     for nt in nonterms[:]:
         if not nt.producing:
             nonterms.remove(nt)
+            if debug: print("Unreachable rule:\n", nt)
+            if debug: print("Rules:\n", nonterms)
 
-
-def make_intersection(cfg, dfa):
-    global starting
+debug = False
+def make_intersection(cfg, dfa, debug_ent):
+    global starting, debug
+    debug = debug_ent
     states = dfa.states
     cfg_nonterms = cfg.nterms
     cfg_rules = cfg.rules
     transitions = dfa.edges
     starting = Scalar(dfa.start_state, cfg.start, dfa.final_state)
     nonterms.append(starting)
+    if debug: print("Starting nonterm:", starting)
     build_terminal_rules(cfg_rules, transitions)
     build_nonterminal_rules(cfg_rules, transitions, states)
     oldRuleSize = len(rules)
@@ -150,6 +165,7 @@ def make_intersection(cfg, dfa):
     return rules
 
 def build_terminal_rules(cfg_rules, transitions):
+    if debug: print("Starting building terminal rules")
     for rule in cfg_rules:
         if is_to_term(rule):
             term = rule.rights[0]
@@ -159,16 +175,16 @@ def build_terminal_rules(cfg_rules, transitions):
             for tr in transitions:
                 if tr.sym == term.symbol:
                     newNonterm = Scalar(tr.e_from, nonterm, tr.e_to)
-                    right_part = []
-                    right_part.append(term)
+                    if debug: print("New nonterminal:\n", newNonterm)
+                    right_part = [term]
                     newRule = []
                     for s in right_part:
                         newRule.append(IntersectionRule(newNonterm, [s]))
-                    # newRule = IntersectionRule(newNonterm, RP)
+
                     rules.extend(newRule)
                     terminalRules.extend(newRule)
-                    # if :
-                    #     nonterms.append(newNonterm)
+                    print("New rules:\n", rules)
+                    print("New terminal rules:\n", terminalRules)
                     is_add = False
                     for nt in nonterms:
                         if nt.p == newNonterm.p:
@@ -179,9 +195,11 @@ def build_terminal_rules(cfg_rules, transitions):
                             is_add = True
                     if not is_add:
                         nonterms.append(newNonterm)
+                        if debug: print("New nonterminals:\n", nonterms)
 
 
 def build_nonterminal_rules(cfg_rules, transitions, states):
+    if debug: print("Starting building nonterminal rules")
     for r in rules:
         if is_to_nonterm_nonterm(r):
             right1 = r.rights[0]
@@ -203,6 +221,7 @@ def build_nonterminal_rules(cfg_rules, transitions, states):
                                         temp = True
                                 if not temp:
                                     nonterms.append(RPleft)
+                                    if debug: print("New nonterminals:\n", nonterms)
                                 RPright = Scalar(qi, right2, q)
                                 if CheckForProducing(RPright, cfg_rules):
                                     bbr = False
@@ -215,6 +234,7 @@ def build_nonterminal_rules(cfg_rules, transitions, states):
                                             bbr = True
                                     if not bbr:
                                         nonterms.append(RPright)
+                                        if debug: print("New nonterminals:\n", nonterms)
                                     bo = False
                                     for tr in terminalRules:
                                         if tr.left == left:
@@ -228,6 +248,7 @@ def build_nonterminal_rules(cfg_rules, transitions, states):
                                     RP.append(RPright)
                                     newRule = IntersectionRule(left, RP)
                                     rules.append(newRule)
+                                    if debug: print("New rules:\n", rules)
 
 
 
