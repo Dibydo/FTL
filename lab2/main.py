@@ -1,6 +1,6 @@
 from parser import read_input
 from intersection import find_intersection
-from new_intersection import *
+from intersection import *
 import argparse
 
 parser = argparse.ArgumentParser(description="")
@@ -15,6 +15,7 @@ c, d = read_input(args.input_path)
 if args.cfg:
     print("CFG:")
     print(c)
+    print(c.rules)
 
 if args.dfa:
     print("DFA:")
@@ -23,9 +24,9 @@ if args.dfa:
 if args.debug:
     print("DEBUG ACTIVE")
 
-intersection = make_intersection(c, d, args.debug)
+intersection = find_intersection(c, d)
 # intersection = find_intersection(c, d)
 # print(intersection)
-# print("Intersection:")
+print("Intersection:")
 for a in intersection:
     print(a)

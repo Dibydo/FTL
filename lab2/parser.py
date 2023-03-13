@@ -1,4 +1,4 @@
-from cfg.cfg import CFG_Parser
+from cfg.parser import CFG_Parser
 from dfa.dfa import DFA, Edge
 
 

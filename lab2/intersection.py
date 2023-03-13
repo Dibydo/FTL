@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from cfg.cfg import CFG
 from cfg.rule import Rule, Term, Nonterm, Epsilon
 from dfa.dfa import DFA, Edge
@@ -86,8 +88,36 @@ def find_intersection(cfg: CFG, dfa: DFA):
     result = find_result(intersection, start)
 
     result = tam_bil_ne_result_vot_result(result, dfa.final_state)
+
+    bad_rule = []
+    for rule in result:
+        if is_self_producting(rule) and not has_nonterm_transit(rule.left, result):
+                bad_rule.append(rule)
+    for rule in bad_rule:
+        result.remove(rule)
+    has_start = False
+    for rule in result:
+        if rule.left == start:
+            has_start = True
+            break
+    if not has_start:
+        result = []
     return result
 
+def is_self_producting(int_rule):
+    for right in int_rule.right:
+        if int_rule.left == right:
+            return True
+    return False
+
+
+def has_nonterm_transit(left, rules):
+    for rule in rules:
+        if rule.left == left:
+            for right in rule.right:
+                if isinstance(right, str):
+                    return True
+    return False
 
 def find_result(intersection: set[IntersectionRule], start: ScalObj):
     final_scals = {start}
